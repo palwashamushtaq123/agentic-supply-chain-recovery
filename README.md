@@ -8,7 +8,7 @@ It automatically triages supplier disruptions, calculates inventory runtimes, ev
 
 ## 🌐 Live Demo & Repository
 
-* **Live Deployed Application:** [Launch Supply Chain Crisis Command](https://your-streamlit-app-url.streamlit.app) 
+* **Live Deployed Application:** [Launch Supply Chain Crisis Command](https://agentic-supply-chain-recovery-aw4omldpjeenaa27jxrgl7.streamlit.app/) 
 * **GitHub Repository:** [palwashamushtaq123/agentic-supply-chain-recovery](https://github.com/palwashamushtaq123/agentic-supply-chain-recovery)
 ---
 
