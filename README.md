@@ -1,12 +1,12 @@
 # ⚡ Supply Chain Crisis Command (Multi-Agent AI Engine)
 
-An enterprise-grade, **Multi-Agent Supply Chain Crisis Management & Recovery System** engineered with **CrewAI**, **Google Gemini (Flash)**, **Python BaseTools**, and **Streamlit**. 
+An enterprise-grade **Multi-Agent Supply Chain Crisis Management System** engineered with **CrewAI**, **Google Gemini**, **Python BaseTools**, and **Streamlit**. 
 
 It automatically triages supplier disruptions, calculates inventory runtimes, evaluates alternative transit modes across cost vs. speed trade-offs, handles incomplete/missing operational metrics safely, and generates downloadable **PDF & Markdown Executive Playbooks**.
 
 ---
 
-## 🌐 Live Demo & GitHub Repository
+## 🌐 Live Demo & Repository
 
 * **Live Deployed Application:** [Launch Supply Chain Crisis Command](https://your-streamlit-app-url.streamlit.app) 
 * **GitHub Repository:** [palwashamushtaq123/agentic-supply-chain-recovery](https://github.com/palwashamushtaq123/agentic-supply-chain-recovery)
@@ -15,9 +15,9 @@ It automatically triages supplier disruptions, calculates inventory runtimes, ev
 ## 🎯 Problem Statement & Agentic Solution
 
 ### The Real-World Problem
-Global supply chains face compounding crisis events—unannounced supplier factory halts, highway/port blockades, unexpected demand spikes, and missing operational metrics. Traditional manual spreadsheet triage is:
-1. **Slow & Fragile:** It takes hours or days to calculate stock exposure across hundreds of SKUs.
-2. **Prone to Risky Guesses:** When operational figures (like exact delay days or daily burn rates) are unknown, logistics teams often make ungrounded assumptions, leading to catastrophic stockouts or exorbitant expedited freight expenses.
+Global supply chains face compounding crisis events—unannounced supplier factory halts, highway/port blockades, unexpected demand spikes, and missing operational metrics (`-1`). Traditional manual spreadsheet triage is:
+1. **Slow & Fragile:** Takes hours to evaluate stock exposure across multiple SKUs.
+2. **Prone to Risky Guesses:** When operational figures (like exact delay days or daily burn rates) are missing, standard systems often make ungrounded assumptions, leading to catastrophic stockouts or exorbitant expedited freight expenses.
 
 ### The Agentic AI Solution
 **Supply Chain Crisis Command** deploys a **sequential 3-agent CrewAI pipeline** supported by **deterministic Python mathematical tools**, **`-1` sentinel missing-data guardrails**, and **dual-key resilience engines**:
@@ -44,20 +44,32 @@ Global supply chains face compounding crisis events—unannounced supplier facto
 ## 🔀 System Architecture & Process Flowchart
 
 ```mermaid
-flowchart LR
-    A[Crisis Scenario + Optional CSV / Inputs] --> B[Agent 1: Disruption & Risk Analyst]
-    B -->|Stock Exposure & Missing-Data Report| C[Agent 2: Logistics Optimizer]
-    C -->|Route Speed & Cost Trade-Offs| D[Agent 3: Recovery Strategist]
-    D --> E[Executive Playbook Output]
+flowchart TD
+    subgraph InputLayer["1. Crisis Data Inputs"]
+        A[Crisis Description / Text Scenario]
+        B[Structured Overrides -1 for Unknowns]
+        C[Upload ERP / Inventory CSV]
+    end
 
-    B -.-> T1[(Tool: calculate_stock_coverage)]
-    C -.-> T2[(Tool: estimate_reroute_option)]
+    subgraph AgentPipeline["2. Sequential 3-Agent CrewAI Pipeline"]
+        D["<b>Agent 1: Disruption & Risk Analyst</b><br/>• Tool: calculate_stock_coverage<br/>• Flags missing data (-1) & applies safety buffers"]
+        E["<b>Agent 2: Logistics Optimizer</b><br/>• Tool: estimate_reroute_option<br/>• Reroutes: Air / Express Road / Alt Rail"]
+        F["<b>Agent 3: Recovery Strategist</b><br/>• Builds 0-24h & 24-72h Action Playbook<br/>• Generates verification questions & triggers"]
+        
+        D -->|Stock Exposure & Safety Buffer Report| E
+        E -->|Route Speed vs. Cost Trade-offs| F
+    end
 
-    F[Dual-Key Rotation + Fallback Engine] -.-> B
-    F -.-> C
-    F -.-> D
+    subgraph ResilienceAndOutput["3. Resilience & Execution Layer"]
+        G[Dual Key Rotation & Fallback Engine]
+        H[Interactive Streamlit Command Dashboard]
+        I[📥 Export PDF & Markdown Playbooks]
+    end
 
-    E --> G[📥 Download .pdf / .md]
+    InputLayer --> D
+    F --> H
+    H --> I
+    G -.- AgentPipeline
 ```
 
 ---
