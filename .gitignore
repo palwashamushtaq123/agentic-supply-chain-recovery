@@ -1,0 +1,25 @@
+# Environment & secrets (NEVER push API keys)
+.env
+.env.*
+!.env.example
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Streamlit & IDE / OS junk
+.streamlit/secrets.toml
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
