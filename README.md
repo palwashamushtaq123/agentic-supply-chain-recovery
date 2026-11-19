@@ -6,7 +6,7 @@ An end-to-end **Multi-Agent Supply Chain Crisis Management System** built with *
 
 ## Live Demo & Repository
 
-- **Live Deployed App:** [Launch Supply Chain Crisis Command](https://your-streamlit-app-url.streamlit.app) *(Replace with your Streamlit Cloud URL)*
+- **Live Deployed App:** [Launch Supply Chain Crisis Command](https://agentic-supply-chain-recovery-aw4omldpjeenaa27jxrgl7.streamlit.app/) *(Replace with your Streamlit Cloud URL)*
 - **GitHub Repository:** [palwashamushtaq123/agentic-supply-chain-recovery](https://github.com/palwashamushtaq123/agentic-supply-chain-recovery)
 
 ---
