@@ -4,6 +4,13 @@ An end-to-end **Multi-Agent Supply Chain Crisis Management System** built with *
 
 ---
 
+## Live Demo & Repository
+
+- **Live Deployed App:** [Launch Supply Chain Crisis Command](https://your-streamlit-app-url.streamlit.app) *(Replace with your Streamlit Cloud URL)*
+- **GitHub Repository:** [palwashamushtaq123/agentic-supply-chain-recovery](https://github.com/palwashamushtaq123/agentic-supply-chain-recovery)
+
+---
+
 ## Problem & Solution
 
 ### Problem
@@ -88,10 +95,11 @@ flowchart LR
 
 ## UI Screenshots
 
-> Place your captured screenshots inside the `sample/` folder and update the filenames below if needed.
+### Command Dashboard & Agent Cards
+![Command Dashboard](sample/dashboard.png)
 
-| View | Preview |
-| --- | --- |
-| **Command Dashboard & Agent Cards** | `![Command Dashboard](sample/dashboard.png)` |
-| **Recovery Playbook (0–24h & 24–72h)** | `![Recovery Playbook](sample/playbook_1.png)` |
-| **Contingency Triggers & Verification Questions** | `![Contingency Triggers](sample/playbook_2.png)` |
+### Recovery Playbook (0–24h & 24–72h)
+![Recovery Playbook](sample/playbook_1.png)
+
+### Contingency Triggers & Verification Questions
+![Contingency Triggers](sample/playbook_2.png)
