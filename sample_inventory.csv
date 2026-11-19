@@ -1,0 +1,4 @@
+sku,item_name,current_stock,daily_demand,delay_days,backup_distance_km,notes
+PKG-101,Corrugated Cartons,1200,-1,-1,650,Primary packaging supplier delayed and highway partially blocked
+LAB-204,Barcode Labels,450,150,2,180,Secondary vendor available with express road option
+RAW-309,Polymer Resin,800,320,5,920,Port congestion reported; air or alt rail needed

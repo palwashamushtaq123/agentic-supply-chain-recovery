@@ -1,6 +1,15 @@
+import pandas as pd
 import streamlit as st
 from crew_setup import run_crisis_crew, FALLBACK_MODELS
 from sample_crises import SCENARIOS
+from styles import (
+    apply_styles,
+    render_header,
+    render_agent_cards,
+    render_sidebar_highlight,
+    render_sidebar_flowchart,
+)
+from pdf_export import markdown_to_pdf_bytes
 
 st.set_page_config(
     page_title="Supply Chain Crisis Command",
@@ -8,152 +17,12 @@ st.set_page_config(
     layout="wide",
 )
 
-# ---------------- Custom HTML & CSS ---------------- #
-st.markdown(
-    """
-    <style>
-        .main-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0f766e 100%);
-            padding: 24px 28px;
-            border-radius: 16px;
-            color: #f8fafc;
-            border: 1px solid rgba(255,255,255,0.12);
-            margin-bottom: 18px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
-        }
-        .main-header h1 {
-            margin: 0 0 6px 0;
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: #ffffff;
-        }
-        .main-header p {
-            margin: 0;
-            color: #cbd5e1;
-            font-size: 0.96rem;
-        }
-        .badge-row {
-            margin-top: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .pill {
-            background: rgba(255,255,255,0.12);
-            color: #e2e8f0;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        .agent-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin: 14px 0 20px 0;
-        }
-        @media (max-width: 900px) {
-            .agent-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .agent-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-top: 4px solid #0f766e;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
-        }
-        .agent-card.blue { border-top-color: #2563eb; }
-        .agent-card.amber { border-top-color: #d97706; }
-        .agent-title {
-            font-weight: 700;
-            font-size: 1rem;
-            color: #0f172a;
-            margin-bottom: 6px;
-        }
-        .agent-desc {
-            font-size: 0.86rem;
-            color: #475569;
-            line-height: 1.45;
-            margin-bottom: 8px;
-        }
-        .tool-tag {
-            display: inline-block;
-            background: #f1f5f9;
-            color: #0f172a;
-            font-family: monospace;
-            font-size: 0.76rem;
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-        }
-        .flow-box {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
-            padding: 16px;
-            margin-top: 10px;
-        }
-        .flow-step {
-            background: #ffffff;
-            border-left: 4px solid #0f766e;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            font-size: 0.84rem;
-            color: #1e293b;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# ---------------- Styles, Header & Agent Cards ---------------- #
+apply_styles()
+render_header()
+render_agent_cards()
 
-# ---------------- Header ---------------- #
-st.markdown(
-    """
-    <div class="main-header">
-        <h1>⚡ Supply Chain Crisis Command</h1>
-        <p>Multi-Agent Disruption Triage, Logistics Optimization & Recovery Playbook Engine</p>
-        <div class="badge-row">
-            <span class="pill">CrewAI Sequential Pipeline</span>
-            <span class="pill">Gemini 3.6 Flash + Auto Fallback</span>
-            <span class="pill">Dual API Key Resilience</span>
-            <span class="pill">Missing-Data Safety Guardrails</span>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ---------------- 3 Agent Overview Cards ---------------- #
-st.markdown(
-    """
-    <div class="agent-grid">
-        <div class="agent-card">
-            <div class="agent-title">1. Disruption & Risk Analyst</div>
-            <div class="agent-desc">Calculates stock runway, flags missing numbers (-1), and applies safety buffers instead of guessing.</div>
-            <span class="tool-tag">Tool: calculate_stock_coverage</span>
-        </div>
-        <div class="agent-card blue">
-            <div class="agent-title">2. Logistics Optimizer</div>
-            <div class="agent-desc">Compares air, express road, and sea/rail transit days & costs based on your chosen priority mode.</div>
-            <span class="tool-tag">Tool: estimate_reroute_option</span>
-        </div>
-        <div class="agent-card amber">
-            <div class="agent-title">3. Recovery Strategist</div>
-            <div class="agent-desc">Builds 0–24h and 24–72h action plans, contingency triggers, and supplier verification questions.</div>
-            <span class="tool-tag">Output: Executive Playbook</span>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ---------------- Sidebar Controls & Flowchart ---------------- #
+# ---------------- Sidebar Controls & Highlighted Flowchart ---------------- #
 with st.sidebar:
     st.header("🎛️ Control Panel")
     key_choice = st.radio(
@@ -176,24 +45,17 @@ with st.sidebar:
         ],
     )
 
+    render_sidebar_highlight(priority_mode, preferred_model)
+
     st.divider()
     st.markdown("### 🔀 System Flowchart")
-    st.markdown(
-        """
-        <div class="flow-box">
-            <div class="flow-step"><b>1. Crisis Input</b><br/>Scenario + Optional Metrics</div>
-            <div class="flow-step"><b>2. Risk Analyst</b><br/>Stock math + Missing-data check</div>
-            <div class="flow-step"><b>3. Logistics Optimizer</b><br/>Air / Road / Rail trade-offs</div>
-            <div class="flow-step"><b>4. Recovery Strategist</b><br/>0–24h & 72h Playbook + Fallback</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    render_sidebar_flowchart()
 
 # ---------------- Scenario & Optional Structured Inputs ---------------- #
 col_left, col_right = st.columns([1.45, 1])
 
 with col_left:
+    st.markdown('<div class="panel-card">', unsafe_allow_html=True)
     preset = st.selectbox("Load Sample Scenario", ["Custom"] + list(SCENARIOS.keys()))
     default_text = "" if preset == "Custom" else SCENARIOS[preset]
 
@@ -203,8 +65,10 @@ with col_left:
         height=135,
         placeholder="Describe supplier failure, delay, stock status, or unknown figures...",
     )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col_right:
+    st.markdown('<div class="panel-card">', unsafe_allow_html=True)
     st.markdown("**Optional Structured Override (Leave -1 if unknown)**")
     c1, c2 = st.columns(2)
     with c1:
@@ -213,8 +77,48 @@ with col_right:
     with c2:
         demand_val = st.number_input("Daily Demand (units/day)", min_value=-1, value=-1, step=50)
         dist_val = st.number_input("Backup Route (km)", min_value=-1, value=-1, step=50)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-# Merge optional overrides cleanly if user changed any from -1
+# ---------------- Optional CSV / ERP Data Upload ---------------- #
+st.markdown('<div class="panel-card">', unsafe_allow_html=True)
+st.markdown("### 📂 Optional: Upload Inventory / ERP CSV")
+
+sample_csv_content = (
+    "sku,item_name,current_stock,daily_demand,delay_days,backup_distance_km,notes\n"
+    "PKG-101,Corrugated Cartons,1200,-1,-1,650,Primary packaging supplier delayed and highway partially blocked\n"
+    "LAB-204,Barcode Labels,450,150,2,180,Secondary vendor available with express road option\n"
+    "RAW-309,Polymer Resin,800,320,5,920,Port congestion reported; air or alt rail needed\n"
+)
+
+st.download_button(
+    label="📥 Download Sample CSV to Test",
+    data=sample_csv_content,
+    file_name="sample_inventory.csv",
+    mime="text/csv",
+)
+
+uploaded_csv = st.file_uploader(
+    "Upload a CSV file to test with live table data (optional)",
+    type=["csv"],
+)
+
+csv_context_text = ""
+if uploaded_csv is not None:
+    try:
+        df_csv = pd.read_csv(uploaded_csv)
+        st.dataframe(df_csv.head(15), use_container_width=True)
+
+        preview_records = df_csv.head(20).to_dict(orient="records")
+        csv_context_text = (
+            f"\n\nUploaded CSV Data ({uploaded_csv.name}, {len(df_csv)} total rows):\n"
+            f"{preview_records}"
+        )
+        st.success(f"Loaded {len(df_csv)} rows from `{uploaded_csv.name}`.")
+    except Exception as e:
+        st.error(f"Could not read CSV file: {e}")
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------------- Merge Inputs & Run Analysis ---------------- #
 extra_parts = []
 if stock_val != -1:
     extra_parts.append(f"Current stock override: {stock_val} units.")
@@ -228,11 +132,15 @@ if dist_val != -1:
 final_crisis_brief = crisis_text.strip()
 if extra_parts:
     final_crisis_brief += "\n\nStructured Metrics Provided:\n" + " ".join(extra_parts)
+if csv_context_text:
+    final_crisis_brief += csv_context_text
 
-# ---------------- Run Analysis ---------------- #
+if "playbook_result" not in st.session_state:
+    st.session_state.playbook_result = None
+
 if st.button("🚀 Launch Multi-Agent Crisis Analysis", type="primary", use_container_width=True):
     if not final_crisis_brief:
-        st.warning("Please enter a crisis scenario or select a sample scenario first.")
+        st.warning("Please enter a crisis scenario, upload a CSV, or select a sample scenario first.")
     else:
         with st.spinner("Agents collaborating on risk triage, rerouting, and recovery strategy..."):
             try:
@@ -242,14 +150,38 @@ if st.button("🚀 Launch Multi-Agent Crisis Analysis", type="primary", use_cont
                     priority_mode=priority_mode,
                     preferred_model=preferred_model,
                 )
-                st.success(f"Completed using: **{used_label}** | Priority: **{priority_mode}**")
-                st.markdown(output)
-
-                st.download_button(
-                    "📥 Download Recovery Playbook (.md)",
-                    data=output,
-                    file_name="supply_chain_recovery_playbook.md",
-                    mime="text/markdown",
-                )
+                st.session_state.playbook_result = {
+                    "output": output,
+                    "used_label": used_label,
+                    "priority_mode": priority_mode,
+                }
             except Exception as e:
                 st.error(f"Execution failed: {e}")
+
+if st.session_state.playbook_result is not None:
+    res = st.session_state.playbook_result
+    st.success(f"Completed using: **{res['used_label']}** | Priority: **{res['priority_mode']}**")
+    st.markdown(res["output"])
+
+    pdf_bytes = markdown_to_pdf_bytes(
+        res["output"],
+        title="Supply Chain Recovery Playbook",
+    )
+
+    col_dl1, col_dl2 = st.columns(2)
+    with col_dl1:
+        st.download_button(
+            "📄 Download Recovery Playbook (.pdf)",
+            data=pdf_bytes,
+            file_name="supply_chain_recovery_playbook.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+        )
+    with col_dl2:
+        st.download_button(
+            "📥 Download Recovery Playbook (.md)",
+            data=res["output"],
+            file_name="supply_chain_recovery_playbook.md",
+            mime="text/markdown",
+            use_container_width=True,
+        )
